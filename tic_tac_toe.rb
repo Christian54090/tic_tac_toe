@@ -2,54 +2,83 @@ class Game
   def start()
   end
 
-  def end()
+  def exit_game()
     exit(0)
   end
 end
 
 class TicTacToe < Game
-  values = {'X' => -1, 'O' => 1}
-
-  @coord_1, @coord_2, @coord_3 = 0, 0, 0
-  @coord_4, @coord_5, @coord_6 = 0, 0, 0
-  @coord_7, @coord_8, @coord_9 = 0, 0, 0
-
-  row_1 = [@coord_1, @coord_2, @coord_3]
-  row_2 = [@coord_4, @coord_5, @coord_6]
-  row_3 = [@coord_7, @coord_8, @coord_9]
-
-  col_1 = [@coord_1, @coord_4, @coord_7]
-  col_2 = [@coord_2, @coord_5, @coord_8]
-  col_3 = [@coord_3, @coord_6, @coord_9]
-
-  dia_1 = [@coord_1, @coord_5, @coord_9]
-  dia_2 = [@coord_3, @coord_5, @coord_7]
 
   def start()
-    # set all values to 0
-    # go to player 1
-  end
-
-  def board
-    puts """
-        |   |
-      1 | 2 | 3
-    -------------
-      4 | 5 | 6
-    -------------
-      7 | 8 | 9
-        |   |
-    """
+    functionality
   end
 
   def functionality
+
+    coords = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+    vals = {1 => 'X', -1 => 'O'}
+    bhash = {}
+
+    @turn = 0
+    while @turn < 9 do
+      puts %Q{
+          |   |
+        #{coords.at(0)} | #{coords.at(1)} | #{coords.at(2)}
+      -------------
+        #{coords.at(3)} | #{coords.at(4)} | #{coords.at(5)}
+      -------------
+        #{coords.at(6)} | #{coords.at(7)} | #{coords.at(8)}
+          |   |
+      }
+      if @turn % 2 == 0
+        puts "O, type your coordinate!"
+        print("> "); pick = $stdin.gets.chomp
+        if !(bhash.has_key?(pick)) && (0..9).include?(pick.to_i)
+          bhash[pick] = -1
+          puts bhash
+          coords.map!{|e| coords.index(e) === (pick.to_i - 1) ? vals[-1] : e}
+        else
+          puts "That coordinate already has a value!"
+          puts bhash.key(pick)
+          functionality
+        end
+      else
+        puts "X, type your coordinate!"
+        print("> "); pick = $stdin.gets.chomp
+        if !(bhash.has_key?(pick)) && (0..9).include?(pick.to_i)
+          bhash[pick] = 1
+          puts bhash
+          coords.map!{|e| coords.index(e) === (pick.to_i - 1) ? vals[1] : e}
+        else
+          puts "That coordinate already has a value!"
+          puts bhash.key(pick)
+          functionality
+        end
+      end
+
+      @turn += 1
+    end
+
+    if ([bhash['1'], bhash['2'], bhash['3']].inject(:+) == 3 || [bhash['4'], bhash['5'], bhash['6']].inject(:+) == 3 ||
+        [bhash['7'], bhash['8'], bhash['9']].inject(:+) == 3 || [bhash['1'], bhash['4'], bhash['7']].inject(:+) == 3 ||
+        [bhash['2'], bhash['5'], bhash['8']].inject(:+) == 3 || [bhash['3'], bhash['6'], bhash['9']].inject(:+) == 3 ||
+        [bhash['1'], bhash['5'], bhash['9']].inject(:+) == 3 || [bhash['3'], bhash['5'], bhash['7']].inject(:+) == 3)
+      exit_game("X wins!")
+    elsif ([bhash['1'], bhash['2'], bhash['3']].inject(:+) == -3 || [bhash['4'], bhash['5'], bhash['6']].inject(:+) == -3 ||
+           [bhash['7'], bhash['8'], bhash['9']].inject(:+) == -3 || [bhash['1'], bhash['4'], bhash['7']].inject(:+) == -3 ||
+           [bhash['2'], bhash['5'], bhash['8']].inject(:+) == -3 || [bhash['3'], bhash['6'], bhash['9']].inject(:+) == -3 ||
+           [bhash['1'], bhash['5'], bhash['9']].inject(:+) == -3 || [bhash['3'], bhash['5'], bhash['7']].inject(:+) == -3)
+      exit_game("O wins!")
+    else
+      exit_game("Cat's game!")
+    end
   end
 
-  def end()
+  def exit_game(exit_text)
     puts exit_text
     exit(0)
   end
 end
 
 game = TicTacToe.new
-game.board
+game.start()
